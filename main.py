@@ -44,8 +44,21 @@ class TestUrbanRoutes:
         time.sleep(10)
 
     def test_fill_phone_number(self):
-        #Adicionar em S8
-        pass
+        self._start_comfort_caminho()
+
+        self.page.click_call_taxi()
+        self.page.select_comfort()
+
+        self.page.click_phone_number()
+        self.page.set_phone_number(data.PHONE_NUMBER)
+        self.page.click_next()
+
+        code = helpers.retrieve_phone_code(self.driver)
+
+        self.page.set_sms_code(code)
+        self.page.click_confirm()
+
+        time.sleep(3)
 
     def test_fill_card(self):
         #Adicionar em S8

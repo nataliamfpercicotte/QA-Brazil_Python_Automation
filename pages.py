@@ -26,6 +26,33 @@ class UrbanRoutesPage:
             "//div[@class='tcard-title' and text()='Comfort']/.."
         )
 
+        #Inserir número de telefone
+
+        phone_number_button = (
+            By.XPATH,
+            "//div[text()='Número de telefone']"
+        )
+
+        phone_input = (
+            By.ID,
+            "phone"
+        )
+
+        next_button = (
+            By.XPATH,
+            "//button[text()='Próximo']"
+        )
+
+        code_input = (
+            By.ID,
+            "code"
+        )
+
+        confirm_button = (
+            By.XPATH,
+            "//button[text()='Confirmar']"
+        )
+
         def __init__(self, driver):
             self.driver = driver
             self.wait = WebDriverWait(driver, 10)
@@ -79,3 +106,20 @@ class UrbanRoutesPage:
         def comfort_is_selected(self):
             comfort = self._find(self.comfort_button)
             return "active" in comfort.get_attribute("class")
+
+        #Numéro de telefone
+
+        def click_phone_number(self):
+            self._click(self.phone_number_button)
+
+        def set_phone_number(self, phone):
+            self._type(self.phone_input, phone)
+
+        def click_next(self):
+            self._click(self.next_button)
+
+        def set_sms_code(self, code):
+            self._type(self.code_input, code)
+
+        def click_confirm(self):
+            self._click(self.confirm_button)
