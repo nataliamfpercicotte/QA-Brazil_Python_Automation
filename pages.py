@@ -105,6 +105,30 @@ class UrbanRoutesPage:
             "//div[text()='Cobertor e lençóis']/following::input[@type='checkbox'][1]"
         )
 
+        #Pedir sorvetes
+
+        ice_cream_plus = (
+            By.XPATH,
+            "(//div[@class='counter-plus'])[1]"
+        )
+
+        ice_cream_count = (
+            By.XPATH,
+            "(//div[@class='counter-value'])[1]"
+        )
+
+        #Pedir o táxi
+
+        order_button = (
+            By.CLASS_NAME,
+            "smart-button"
+        )
+
+        car_search_modal = (
+            By.CLASS_NAME,
+            "order"
+        )
+
 
         def __init__(self, driver):
             self.driver = driver
@@ -226,3 +250,19 @@ class UrbanRoutesPage:
 
         def blanket_and_tissues_selected(self):
             return self._find(self.blanket_checkbox).is_selected()
+
+        #Pedir 2 sorvetes
+
+        def click_ice_cream_plus(self):
+            self._click(self.ice_cream_plus)
+
+        def get_ice_cream_count(self):
+            return self._find(self.ice_cream_count).text
+
+        #Pedir um táxi com a tarifa "Comfort"
+
+        def click_order_button(self):
+            self._click(self.order_button)
+
+        def car_search_modal_is_displayed(self):
+            return self._find(self.car_search_modal).is_displayed()

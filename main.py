@@ -98,29 +98,39 @@ class TestUrbanRoutes:
         self.page.click_call_taxi()
         self.page.select_comfort()
 
-        self.page.click_payment_method()
-        self.page.click_add_card()
-        self.page.set_card_number(data.CARD_NUMBER)
-        self.page.set_card_code(data.CARD_CODE)
-        self.page.click_add_button()
-        self.page.close_payment_method()
-
-        self.page.set_driver_comment(data.MESSAGE_FOR_DRIVER)
-        time.sleep(3)
-
         self.page.click_blanket_and_tissues()
-        time.sleep(5)
 
         assert self.page.blanket_and_tissues_selected()
 
+        time.sleep(5)
+
     def test_order_2_ice_creams(self):
+        self._start_comfort_caminho()
+
+        self.page.click_call_taxi()
+        self.page.select_comfort()
+
         for i in range(2):
-         # Adicionar em S8
-            pass
+            self.page.click_ice_cream_plus()
+            time.sleep(1)
+
+        assert self.page.get_ice_cream_count() == "2"
+
+        time.sleep(25)
 
     def test_car_search_model_appears(self):
-        # Adicionar em S8
-            pass
+        self._start_comfort_caminho()
+
+        self.page.click_call_taxi()
+        self.page.select_comfort()
+
+        self.page.set_driver_comment(data.MESSAGE_FOR_DRIVER)
+
+        self.page.click_order_button()
+
+        time.sleep(10)
+
+        assert self.page.car_search_modal_is_displayed()
 
     @classmethod
     def teardown_class(cls):
