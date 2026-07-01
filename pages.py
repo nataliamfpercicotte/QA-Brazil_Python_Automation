@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 import time
+from selenium.webdriver.common.keys import Keys
 
 
 class UrbanRoutesPage:
@@ -53,6 +54,58 @@ class UrbanRoutesPage:
             "//button[text()='Confirmar']"
         )
 
+        #Inserir cartão de crédito
+
+        payment_method = (
+            By.CLASS_NAME,
+            "pp-text"
+        )
+
+        add_card = (
+            By.XPATH,
+            "//div[contains(@class, 'pp-row') and .//div[text()='Adicionar cartão']]"
+        )
+
+        card_number = (
+            By.CSS_SELECTOR,
+            "input.card-input#number"
+        )
+
+        card_code = (
+            By.CSS_SELECTOR,
+            "input.card-input#code"
+        )
+
+        add_card_button = (
+            By.XPATH,
+            "//button[text()='Adicionar']"
+        )
+
+        #Comentário
+
+        close_payment_button = (
+            By.XPATH,
+            "//div[contains(@class,'payment-picker') and contains(@class,'open')]//button[contains(@class,'section-close')]"
+        )
+
+        comment_input = (
+            By.ID,
+            "comment"
+        )
+
+        #Cobertores e lenços
+
+        blanket_switch = (
+            By.XPATH,
+            "//div[text()='Cobertor e lençóis']/following::span[@class='slider round'][1]"
+        )
+
+        blanket_checkbox = (
+            By.XPATH,
+            "//div[text()='Cobertor e lençóis']/following::input[@type='checkbox'][1]"
+        )
+
+
         def __init__(self, driver):
             self.driver = driver
             self.wait = WebDriverWait(driver, 10)
@@ -64,10 +117,11 @@ class UrbanRoutesPage:
                 EC.presence_of_element_located(locator)
             )
 
-        def _click(self,locator):
-            self.wait.until(
+        def _click(self, locator):
+            element = self.wait.until(
                 EC.element_to_be_clickable(locator)
-            ).click()
+            )
+            self.driver.execute_script("arguments[0].click();", element)
 
         def _type(self, locator, text):
             element = self._find(locator)
@@ -123,3 +177,52 @@ class UrbanRoutesPage:
 
         def click_confirm(self):
             self._click(self.confirm_button)
+
+        #Cartão de crédito
+
+        def click_payment_method(self):
+            self._click(self.payment_method)
+
+        def click_add_card(self):
+            self._click(self.add_card)
+
+        def set_card_number(self, number):
+            self._type(self.card_number, number)
+
+        def set_card_code(self, code):
+            element = self.wait.until(
+                EC.element_to_be_clickable(self.card_code)
+            )
+            element.click()
+            element.send_keys(code)
+            element.send_keys(Keys.TAB)
+
+        def click_add_button(self):
+            self._click(self.add_card_button)
+
+        #Comentário para o motorista
+
+        def close_payment_method(self):
+            self._click(self.close_payment_button)
+
+        def set_driver_comment(self, comment):
+            self._type(self.comment_input, comment)
+
+        def get_driver_comment(self):
+            return self._get_value(self.comment_input)
+
+        #Solicitar cobertores e lenços
+
+        def click_blanket_and_tissues(self):
+            element = self._find(self.blanket_switch)
+
+            self.driver.execute_script(
+                "arguments[0].scrollIntoView({block: 'center'});",
+                element
+            )
+
+            time.sleep(1)
+            element.click()
+
+        def blanket_and_tissues_selected(self):
+            return self._find(self.blanket_checkbox).is_selected()

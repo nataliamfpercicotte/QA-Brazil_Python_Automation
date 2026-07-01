@@ -61,25 +61,66 @@ class TestUrbanRoutes:
         time.sleep(3)
 
     def test_fill_card(self):
-        #Adicionar em S8
-        pass
+        self._start_comfort_caminho()
+
+        self.page.click_call_taxi()
+        self.page.select_comfort()
+
+        self.page.click_payment_method()
+        self.page.click_add_card()
+
+        self.page.set_card_number(data.CARD_NUMBER)
+        self.page.set_card_code(data.CARD_CODE)
+
+        self.page.click_add_button()
+        time.sleep(5)
 
     def test_comment_for_driver(self):
-        #Adicionar em S8
-        pass
+        self._start_comfort_caminho()
+
+        self.page.click_call_taxi()
+        self.page.select_comfort()
+
+        self.page.click_payment_method()
+        self.page.click_add_card()
+        self.page.set_card_number(data.CARD_NUMBER)
+        self.page.set_card_code(data.CARD_CODE)
+        self.page.click_add_button()
+        self.page.close_payment_method()
+
+        self.page.set_driver_comment(data.MESSAGE_FOR_DRIVER)
+
+        assert self.page.get_driver_comment() == data.MESSAGE_FOR_DRIVER
 
     def test_order_blanket_and_handkerchiefs(self):
-        #Adicionar em S8
-        pass
+        self._start_comfort_caminho()
+
+        self.page.click_call_taxi()
+        self.page.select_comfort()
+
+        self.page.click_payment_method()
+        self.page.click_add_card()
+        self.page.set_card_number(data.CARD_NUMBER)
+        self.page.set_card_code(data.CARD_CODE)
+        self.page.click_add_button()
+        self.page.close_payment_method()
+
+        self.page.set_driver_comment(data.MESSAGE_FOR_DRIVER)
+        time.sleep(3)
+
+        self.page.click_blanket_and_tissues()
+        time.sleep(5)
+
+        assert self.page.blanket_and_tissues_selected()
 
     def test_order_2_ice_creams(self):
         for i in range(2):
-            # Adicionar em S8
+         # Adicionar em S8
             pass
 
     def test_car_search_model_appears(self):
-        #Adicionar em S8
-        pass
+        # Adicionar em S8
+            pass
 
     @classmethod
     def teardown_class(cls):
