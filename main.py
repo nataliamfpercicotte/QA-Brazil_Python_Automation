@@ -37,8 +37,11 @@ class TestUrbanRoutes:
         time.sleep(10)
 
     def test_select_plan(self):
-        #Adicionar em S8
-        pass
+        self._start_comfort_caminho()
+        self.page.click_call_taxi()
+        self.page.select_comfort()
+        assert self.page.comfort_is_selected()
+        time.sleep(10)
 
     def test_fill_phone_number(self):
         #Adicionar em S8
