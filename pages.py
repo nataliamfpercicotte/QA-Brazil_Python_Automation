@@ -1,268 +1,212 @@
-from html.parser import commentclose
-
-from selenium.webdriver.common import by
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
-import time
-from selenium.webdriver.common.keys import Keys
+
+from helpers import retrieve_phone_code
 
 
 class UrbanRoutesPage:
 
-        #De e Para
+    FROM_FIELD = (By.ID, "from")
+    TO_FIELD = (By.ID, "to")
 
-        from_campo = (By.ID, 'from')
-        to_campo = (By.ID, 'to')
+    CALL_A_TAXI_BUTTON = (By.XPATH, '//button[text()="Chamar um táxi"]')
+    COMFORT_CARD = (By.XPATH, '//div[@class="tcard-title" and text()="Comfort"]/..')
 
-        #Chamar um táxi
+    PHONE_NUMBER_BUTTON = (By.XPATH, '//div[text()="Número de telefone"]')
+    PHONE_INPUT = (By.ID, "phone")
+    NEXT_BUTTON = (By.XPATH, '//button[text()="Próximo"]')
+    CODE_INPUT = (By.ID, "code")
+    CONFIRM_BUTTON = (By.XPATH, '//button[text()="Confirmar"]')
+    INSERTED_PHONE_NUMBER = (By.CLASS_NAME, "np-text")
 
-        call_taxi_button = (
-            By.XPATH,
-            "//button[contains(text(),'Chamar um táxi')]"
+    PAYMENT_METHOD_BUTTON = (
+        By.XPATH,
+        '//div[@class="pp-button filled"]//div[contains(text(), "Método de pagamento")]'
+    )
+
+    ADD_CARD_BUTTON_ROW = (
+        By.XPATH,
+        '//div[text()="Adicionar cartão"]'
+    )
+
+    CARD_NUMBER_INPUT = (
+        By.CSS_SELECTOR,
+        "input.card-input#number"
+    )
+
+    CARD_CODE_INPUT = (
+        By.CSS_SELECTOR,
+        "input.card-input#code"
+    )
+
+    ADD_CARD_BUTTON = (
+        By.XPATH,
+        '//button[text()="Adicionar"]'
+    )
+
+    CURRENT_PAYMENT_METHOD = (
+        By.CLASS_NAME,
+        "pp-value-text"
+    )
+
+    CLOSE_PAYMENT_BUTTON = (
+        By.XPATH,
+        '//div[contains(@class,"payment-picker") and contains(@class,"open")]//button[contains(@class,"section-close")]'
+    )
+
+    COMMENT_INPUT = (By.ID, "comment")
+
+    BLANKET_SWITCH = (
+        By.XPATH,
+        '//div[text()="Cobertor e lençóis"]/following::span[@class="slider round"][1]'
+    )
+
+    BLANKET_CHECKBOX = (
+        By.XPATH,
+        '//div[text()="Cobertor e lençóis"]/following::input[@type="checkbox"][1]'
+    )
+
+    ICE_CREAM_PLUS = (
+        By.XPATH,
+        '(//div[@class="counter-plus"])[1]'
+    )
+
+    ICE_CREAM_COUNT = (
+        By.XPATH,
+        '(//div[@class="counter-value"])[1]'
+    )
+
+    ORDER_BUTTON = (By.CLASS_NAME, "smart-button")
+    CAR_SEARCH_MODAL = (By.CLASS_NAME, "order")
+
+    def __init__(self, driver):
+        self.driver = driver
+        self.wait = WebDriverWait(driver, 10)
+
+    def _find(self, locator):
+        return self.wait.until(
+            EC.presence_of_element_located(locator)
         )
 
-        comfort_button = (
-            By.XPATH,
-            "//div[@class='tcard-title' and text()='Comfort']/.."
-        )
-
-        #Inserir número de telefone
-
-        phone_number_button = (
-            By.XPATH,
-            "//div[text()='Número de telefone']"
-        )
-
-        phone_input = (
-            By.ID,
-            "phone"
-        )
-
-        next_button = (
-            By.XPATH,
-            "//button[text()='Próximo']"
-        )
-
-        code_input = (
-            By.ID,
-            "code"
-        )
-
-        confirm_button = (
-            By.XPATH,
-            "//button[text()='Confirmar']"
-        )
-
-        #Inserir cartão de crédito
-
-        payment_method = (
-            By.CLASS_NAME,
-            "pp-text"
-        )
-
-        add_card = (
-            By.XPATH,
-            "//div[contains(@class, 'pp-row') and .//div[text()='Adicionar cartão']]"
-        )
-
-        card_number = (
-            By.CSS_SELECTOR,
-            "input.card-input#number"
-        )
+    def _click(self, locator):
+        self.wait.until(
+            EC.element_to_be_clickable(locator)
+        ).click()
 
-        card_code = (
-            By.CSS_SELECTOR,
-            "input.card-input#code"
-        )
+    def _type(self, locator, text):
+        element = self._find(locator)
+        element.clear()
+        element.send_keys(text)
 
-        add_card_button = (
-            By.XPATH,
-            "//button[text()='Adicionar']"
-        )
+    def _get_value(self, locator):
+        return self._find(locator).get_attribute("value")
 
-        #Comentário
+    def _get_text(self, locator):
+        return self._find(locator).text
 
-        close_payment_button = (
-            By.XPATH,
-            "//div[contains(@class,'payment-picker') and contains(@class,'open')]//button[contains(@class,'section-close')]"
-        )
+    def _press_tab(self):
+        self.driver.switch_to.active_element.send_keys(Keys.TAB)
 
-        comment_input = (
-            By.ID,
-            "comment"
-        )
+    def enter_locations(self, from_text, to_text):
+        self._type(self.FROM_FIELD, from_text)
+        self._type(self.TO_FIELD, to_text)
 
-        #Cobertores e lenços
+    def get_from_location(self):
+        return self._get_value(self.FROM_FIELD)
 
-        blanket_switch = (
-            By.XPATH,
-            "//div[text()='Cobertor e lençóis']/following::span[@class='slider round'][1]"
-        )
+    def get_to_location(self):
+        return self._get_value(self.TO_FIELD)
 
-        blanket_checkbox = (
-            By.XPATH,
-            "//div[text()='Cobertor e lençóis']/following::input[@type='checkbox'][1]"
-        )
+    def click_call_taxi(self):
+        self._click(self.CALL_A_TAXI_BUTTON)
 
-        #Pedir sorvetes
+    def select_comfort(self):
+        comfort = self._find(self.COMFORT_CARD)
 
-        ice_cream_plus = (
-            By.XPATH,
-            "(//div[@class='counter-plus'])[1]"
-        )
+        if "active" not in comfort.get_attribute("class"):
+            comfort.click()
 
-        ice_cream_count = (
-            By.XPATH,
-            "(//div[@class='counter-value'])[1]"
-        )
+    def comfort_is_selected(self):
+        comfort = self._find(self.COMFORT_CARD)
+        return "active" in comfort.get_attribute("class")
 
-        #Pedir o táxi
+    def set_phone(self, phone_number):
+        self._click(self.PHONE_NUMBER_BUTTON)
+        self._type(self.PHONE_INPUT, phone_number)
+        self._click(self.NEXT_BUTTON)
 
-        order_button = (
-            By.CLASS_NAME,
-            "smart-button"
-        )
+        phone_code = retrieve_phone_code(self.driver)
 
-        car_search_modal = (
-            By.CLASS_NAME,
-            "order"
-        )
+        self._type(self.CODE_INPUT, phone_code)
+        self._click(self.CONFIRM_BUTTON)
 
+    def get_inserted_phone_number(self):
+        return self._get_text(self.INSERTED_PHONE_NUMBER)
 
-        def __init__(self, driver):
-            self.driver = driver
-            self.wait = WebDriverWait(driver, 10)
+    def set_card(self, card_number, card_code):
+        self._click(self.PAYMENT_METHOD_BUTTON)
+        self._click(self.ADD_CARD_BUTTON_ROW)
+        self._type(self.CARD_NUMBER_INPUT, card_number)
+        self._type(self.CARD_CODE_INPUT, card_code)
+        self._press_tab()
+        self._click(self.ADD_CARD_BUTTON)
 
-        #Métodos COR POM
+    def get_current_payment_method(self):
+        return self._get_text(self.CURRENT_PAYMENT_METHOD)
 
-        def _find(self,locator):
-            return self.wait.until(
-                EC.presence_of_element_located(locator)
-            )
+    def close_payment_method(self):
+        self._click(self.CLOSE_PAYMENT_BUTTON)
 
-        def _click(self, locator):
-            element = self.wait.until(
-                EC.element_to_be_clickable(locator)
-            )
-            self.driver.execute_script("arguments[0].click();", element)
+    def set_driver_comment(self, comment):
+        self._type(self.COMMENT_INPUT, comment)
 
-        def _type(self, locator, text):
-            element = self._find(locator)
-            element.clear()
-            element.send_keys(text)
+    def get_driver_comment(self):
+        return self._get_value(self.COMMENT_INPUT)
 
-        #Endereço
+    def click_blanket_and_tissues(self):
+        self.wait.until(
+            EC.element_to_be_clickable(self.BLANKET_SWITCH)
+        ).click()
 
-        def _get_text(self,locator):
-            return self._find(locator).text
+    def blanket_and_tissues_selected(self):
+        return self._find(self.BLANKET_CHECKBOX).is_selected()
 
-        def _get_value(self,locator):
-            return self._find(locator).get_attribute('value')
+    def click_ice_cream_plus(self):
+        self._click(self.ICE_CREAM_PLUS)
 
-        def enter_locations(self, from_text, to_text):
-            self._type(self.from_campo, from_text)
-            self._type(self.to_campo, to_text)
+    def get_ice_cream_count(self):
+        return self._get_text(self.ICE_CREAM_COUNT)
 
-        def get_from_location(self):
-            return self._get_value(self.from_campo)
+    def click_order_button(self):
+        self._click(self.ORDER_BUTTON)
 
-        def get_to_location(self):
-            return self._get_value(self.to_campo)
+    def car_search_modal_is_displayed(self):
+        return self._find(self.CAR_SEARCH_MODAL).is_displayed()
+    def close_payment_method(self):
+        self._click(self.CLOSE_PAYMENT_BUTTON)
 
-        #Selecionar comfort
+    def set_driver_comment(self, comment):
+        self._type(self.COMMENT_INPUT, comment)
 
-        def click_call_taxi(self):
-            self._click(self.call_taxi_button)
+    def get_driver_comment(self):
+        return self._get_value(self.COMMENT_INPUT)
 
-        def select_comfort(self):
-            comfort = self._find(self.comfort_button)
+    def click_blanket_and_tissues(self):
+        self.wait.until(EC.element_to_be_clickable(self.BLANKET_SWITCH)).click()
 
-            if "active" not in comfort.get_attribute("class"):
-                comfort.click()
+    def blanket_and_tissues_selected(self):
+        return self._find(self.BLANKET_CHECKBOX).is_selected()
 
-        def comfort_is_selected(self):
-            comfort = self._find(self.comfort_button)
-            return "active" in comfort.get_attribute("class")
+    def click_ice_cream_plus(self):
+        self._click(self.ICE_CREAM_PLUS)
 
-        #Numéro de telefone
+    def get_ice_cream_count(self):
+        return self._get_text(self.ICE_CREAM_COUNT)
 
-        def click_phone_number(self):
-            self._click(self.phone_number_button)
+    def click_order_button(self):
+        self._click(self.ORDER_BUTTON)
 
-        def set_phone_number(self, phone):
-            self._type(self.phone_input, phone)
-
-        def click_next(self):
-            self._click(self.next_button)
-
-        def set_sms_code(self, code):
-            self._type(self.code_input, code)
-
-        def click_confirm(self):
-            self._click(self.confirm_button)
-
-        #Cartão de crédito
-
-        def click_payment_method(self):
-            self._click(self.payment_method)
-
-        def click_add_card(self):
-            self._click(self.add_card)
-
-        def set_card_number(self, number):
-            self._type(self.card_number, number)
-
-        def set_card_code(self, code):
-            element = self.wait.until(
-                EC.element_to_be_clickable(self.card_code)
-            )
-            element.click()
-            element.send_keys(code)
-            element.send_keys(Keys.TAB)
-
-        def click_add_button(self):
-            self._click(self.add_card_button)
-
-        #Comentário para o motorista
-
-        def close_payment_method(self):
-            self._click(self.close_payment_button)
-
-        def set_driver_comment(self, comment):
-            self._type(self.comment_input, comment)
-
-        def get_driver_comment(self):
-            return self._get_value(self.comment_input)
-
-        #Solicitar cobertores e lenços
-
-        def click_blanket_and_tissues(self):
-            element = self._find(self.blanket_switch)
-
-            self.driver.execute_script(
-                "arguments[0].scrollIntoView({block: 'center'});",
-                element
-            )
-
-            time.sleep(1)
-            element.click()
-
-        def blanket_and_tissues_selected(self):
-            return self._find(self.blanket_checkbox).is_selected()
-
-        #Pedir 2 sorvetes
-
-        def click_ice_cream_plus(self):
-            self._click(self.ice_cream_plus)
-
-        def get_ice_cream_count(self):
-            return self._find(self.ice_cream_count).text
-
-        #Pedir um táxi com a tarifa "Comfort"
-
-        def click_order_button(self):
-            self._click(self.order_button)
-
-        def car_search_modal_is_displayed(self):
-            return self._find(self.car_search_modal).is_displayed()
+    def car_search_modal_is_displayed(self):
+        return self._find(self.CAR_SEARCH_MODAL).is_displayed()
