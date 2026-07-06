@@ -184,29 +184,3 @@ class UrbanRoutesPage:
 
     def car_search_modal_is_displayed(self):
         return self._find(self.CAR_SEARCH_MODAL).is_displayed()
-    def close_payment_method(self):
-        self._click(self.CLOSE_PAYMENT_BUTTON)
-
-    def set_driver_comment(self, comment):
-        self._type(self.COMMENT_INPUT, comment)
-
-    def get_driver_comment(self):
-        return self._get_value(self.COMMENT_INPUT)
-
-    def click_blanket_and_tissues(self):
-        self.wait.until(EC.element_to_be_clickable(self.BLANKET_SWITCH)).click()
-
-    def blanket_and_tissues_selected(self):
-        return self._find(self.BLANKET_CHECKBOX).is_selected()
-
-    def click_ice_cream_plus(self):
-        self._click(self.ICE_CREAM_PLUS)
-
-    def get_ice_cream_count(self):
-        return self._get_text(self.ICE_CREAM_COUNT)
-
-    def click_order_button(self):
-        self._click(self.ORDER_BUTTON)
-
-    def car_search_modal_is_displayed(self):
-        return self._find(self.CAR_SEARCH_MODAL).is_displayed()

@@ -1,6 +1,5 @@
 import data
 import helpers
-
 from pages import UrbanRoutesPage
 from selenium.webdriver import Chrome
 
@@ -83,25 +82,13 @@ class TestUrbanRoutes:
 
     def test_comment_for_driver(self):
         self._start_comfort_caminho()
-
         self.page.click_call_taxi()
         self.page.select_comfort()
-
-        self.page.set_card(
-            data.CARD_NUMBER,
-            data.CARD_CODE
-        )
-
+        self.page.set_phone(data.PHONE_NUMBER)
+        self.page.set_card(data.CARD_NUMBER, data.CARD_CODE)
         self.page.close_payment_method()
-
-        self.page.set_driver_comment(
-            data.MESSAGE_FOR_DRIVER
-        )
-
-        assert (
-            self.page.get_driver_comment()
-            == data.MESSAGE_FOR_DRIVER
-        )
+        self.page.set_driver_comment(data.MESSAGE_FOR_DRIVER)
+        assert self.page.get_driver_comment() == data.MESSAGE_FOR_DRIVER
 
     def test_order_blanket_and_handkerchiefs(self):
         self._start_comfort_caminho()
@@ -115,27 +102,24 @@ class TestUrbanRoutes:
 
     def test_order_2_ice_creams(self):
         self._start_comfort_caminho()
-
         self.page.click_call_taxi()
         self.page.select_comfort()
-
+        self.page.set_phone(data.PHONE_NUMBER)
+        self.page.set_card(data.CARD_NUMBER, data.CARD_CODE)
+        self.page.close_payment_method()
         for _ in range(2):
             self.page.click_ice_cream_plus()
-
         assert self.page.get_ice_cream_count() == "2"
 
     def test_car_search_model_appears(self):
         self._start_comfort_caminho()
-
         self.page.click_call_taxi()
         self.page.select_comfort()
-
-        self.page.set_driver_comment(
-            data.MESSAGE_FOR_DRIVER
-        )
-
+        self.page.set_phone(data.PHONE_NUMBER)
+        self.page.set_card(data.CARD_NUMBER, data.CARD_CODE)
+        self.page.close_payment_method()
+        self.page.set_driver_comment(data.MESSAGE_FOR_DRIVER)
         self.page.click_order_button()
-
         assert self.page.car_search_modal_is_displayed()
 
     @classmethod
